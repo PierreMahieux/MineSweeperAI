@@ -2,7 +2,7 @@ package minesweeper.model;
 
 import java.util.ArrayList;
 
-import minesweeper.utils.Matrix;
+import utils.Matrix;
 
 public class Brain
 {

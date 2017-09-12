@@ -1,4 +1,4 @@
-package minesweeper.utils;
+package utils;
 
 /******************************************************************************
  *  Compilation:  javac Matrix.java
