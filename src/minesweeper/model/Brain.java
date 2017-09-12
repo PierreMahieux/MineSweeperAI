@@ -11,8 +11,12 @@ public class Brain
 	// State matrix at each level
 	private ArrayList<Matrix> states = new ArrayList<Matrix>();	
 	
+
+	/**
+	 *  Creates a brain from another brain's data
+	 * @param copy Brain to Copy
+	 */
 	public Brain(Brain copy)
-	// Create a brain from another brain's data
 	{
 		for(Matrix m : copy.weigths)
 		{
@@ -24,8 +28,12 @@ public class Brain
 		}
 	}
 	
+	/**
+	 * Creates a brain from a matrix list
+	 * I guess it shouldn't be used
+	 * @param list
+	 */
 	public Brain(ArrayList<Matrix> list)
-	// Create brain from a matrix list
 	{
 		for(Matrix m : list)
 		{
@@ -41,8 +49,11 @@ public class Brain
 		show();
 	}
 	
+	/**
+	 * Brain(1,2,3,4) will create a Brain with 1 input, two hidden layers of 2 and 3 neurons, and 4 outputs.
+	 * @param levels : a list of integer that will represent the number of neurons by level.
+	 */
 	public Brain(int... levels)
-	// Create a brain from nothing but its levels
 	{
 		if(levels.length < 2)
 		{
@@ -55,10 +66,10 @@ public class Brain
 			// Add a state matrix sized (1, number of neurons in this level)
 			states.add(new Matrix(1,levels[i]));
 			
-			// No weights matrix for last level
+			//As weights are transition between states, there's one state level more than weigths 
 			if(i!=levels.length-1)
 			{
-				// Create a random matrix sized (neurons number, neurons number+1)
+				// Create a random matrix sized (number of neurons in previous State, number of neurons in next State)
 				weigths.add(Matrix.random(levels[i], levels[i+1]));
 			}
 		}	
@@ -74,6 +85,11 @@ public class Brain
 		return new ArrayList<>(weigths);
 	}
 	
+	/**
+	 * Execute the Brain with input Data
+	 * @param inputs State matrix of the inputs
+	 * @return a Matrix representing the output of the neural network
+	 */
 	public Matrix compute(Matrix inputs)
 	{
 		states.get(0).set(inputs);
@@ -87,6 +103,12 @@ public class Brain
 		return states.get(states.size()-1);
 	}
 	
+	/**
+	 * Reproduction of two brains, letting mom and dad untouched
+	 * @param pap 
+	 * @param mam
+	 * @return A child Brain with some Dad and Mom features and maybe random mutations
+	 */
 	static public Brain fusion(Brain pap, Brain mam)
 	{
 		Brain child = new Brain(pap);

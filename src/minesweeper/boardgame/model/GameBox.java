@@ -1,9 +1,10 @@
 package minesweeper.boardgame.model;
 
 public class GameBox {
-	BoxStateGame gameState;
-	BoxStatePlayer playerState;
-	Integer number;
+	
+	public BoxStateGame gameState;
+	public BoxStatePlayer playerState;
+	public Integer number;
 	
 	public GameBox() {
 		this.playerState = BoxStatePlayer.UNKNOWN;
