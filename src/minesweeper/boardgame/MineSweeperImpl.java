@@ -11,7 +11,7 @@ public class MineSweeperImpl implements MineSweeper
 	
 	protected final int BOARD_SIZE = 6;
 	
-	protected int bombNumber = BOARD_SIZE*BOARD_SIZE/4;
+	protected int bombToGenerate = BOARD_SIZE*BOARD_SIZE/4;
 	
 	public MineSweeperImpl() {
 		for(int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
@@ -29,13 +29,13 @@ public class MineSweeperImpl implements MineSweeper
 	protected void fillWithBombs()
 	{
 		int mineCount = 0;
-		while(mineCount < bombNumber)
+		while(mineCount <= bombToGenerate)
 		{
 			double maxRand = 0;
 			int indexMax = 0;
 			for(int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
 			{
-				if(boxes.get(indexMax).gameState != BoxStateGame.BOMB)
+				if(boxes.get(i).gameState != BoxStateGame.BOMB)
 				{
 					double rand = Math.random();
 					if( rand > maxRand) 
@@ -44,8 +44,7 @@ public class MineSweeperImpl implements MineSweeper
 						indexMax = i;
 					}
 				}
-			}
-			
+			}			
 			boxes.get(indexMax).gameState = BoxStateGame.BOMB;
 			mineCount++;
 		}
