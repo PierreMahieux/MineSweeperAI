@@ -38,7 +38,7 @@ public class Brain
 	{
 		if(levels.length < 2)
 		{
-			System.err.println("Brain too litle");
+			System.err.println("Brain too litle. Ask Pierre if you want to know what it feels like.");
 			return;
 		}
 		
