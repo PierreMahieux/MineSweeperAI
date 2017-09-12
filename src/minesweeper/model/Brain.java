@@ -6,10 +6,10 @@ import utils.Matrix;
 
 public class Brain
 {
-	// Matrice de passage
+	// Weights matrix between the levels
 	private ArrayList<Matrix> weigths = new ArrayList<Matrix>();
-	// Matrice d'états
-	private ArrayList<Matrix> states = new ArrayList<Matrix>();
+	// State matrix at each level
+	private ArrayList<Matrix> states = new ArrayList<Matrix>();	
 	
 	public Brain(Brain copy)
 	// Create a brain from another brain's data
