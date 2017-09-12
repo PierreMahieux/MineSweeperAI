@@ -6,11 +6,13 @@ import utils.Matrix;
 
 public class Brain
 {
-	
-	private ArrayList<Matrix> weigths = new ArrayList<Matrix>(); 	//passage
-	private ArrayList<Matrix> states = new ArrayList<Matrix>(); 	//Etats
+	// Matrice de passage
+	private ArrayList<Matrix> weigths = new ArrayList<Matrix>();
+	// Matrice d'états
+	private ArrayList<Matrix> states = new ArrayList<Matrix>();
 	
 	public Brain(Brain copy)
+	// Create a brain from another brain's data
 	{
 		for(Matrix m : copy.weigths)
 		{
@@ -23,31 +25,40 @@ public class Brain
 	}
 	
 	public Brain(ArrayList<Matrix> list)
+	// Create brain from a matrix list
 	{
 		for(Matrix m : list)
 		{
+			// Weight are the same
 			weigths.add(new Matrix(m));
+			// States are created in matrix sized (1, m's number of rows)
 			states.add(new Matrix(1,m.getSize()[0]));
 		}
+		// Add matrix sized (1, last m's number of columns)
 		states.add(new Matrix(1,list.get(list.size()-1).getSize()[1]));
 		
+		// Deprecated method ?
 		show();
 	}
 	
 	public Brain(int... levels)
+	// Create a brain from nothing but its levels
 	{
 		if(levels.length < 2)
 		{
-			System.err.println("Brain too litle");
+			System.err.println("Brain too litle. Ask Pierre if you want to know what it feels like.");
 			return;
 		}
 		
 		for(int i = 0; i < levels.length; i++)
 		{
+			// Add a state matrix sized (1, number of neurons in this level)
 			states.add(new Matrix(1,levels[i]));
 			
+			// No weights matrix for last level
 			if(i!=levels.length-1)
 			{
+				// Create a random matrix sized (neurons number, neurons number+1)
 				weigths.add(Matrix.random(levels[i], levels[i+1]));
 			}
 		}	
