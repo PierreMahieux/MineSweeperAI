@@ -25,6 +25,16 @@ public class MineSweeperImpl implements MineSweeper
 		fillWithBombs();	
 		
 		registerNumbers();
+
+		openBoxAt(0, 0);
+		putFlagAt(5, 5);
+		
+		this.printBoardAsPlayer();
+		int[] tab = this.getBoardSnapshot();
+		for(int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
+		{
+			System.out.print(tab[i] + " ");
+		}
 	}
 	
 	protected void fillWithBombs()
@@ -225,5 +235,28 @@ public class MineSweeperImpl implements MineSweeper
 				return score;
 			}
 		};
+	}
+
+	@Override
+	public int[] getBoardSnapshot() {
+		int tab[] = new int[BOARD_SIZE*BOARD_SIZE];
+		for(int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
+		{
+			switch(boxes.get(i).playerState)
+			{
+				case FLAGGED:
+					tab[i] = -2;
+					break;
+					
+				case UNKNOWN:
+					tab[i] = -1;
+					break;
+					
+				case OPENED:
+					tab[i] = boxes.get(i).number;				
+					break;
+			}
+		}
+		return tab;
 	}
 }
