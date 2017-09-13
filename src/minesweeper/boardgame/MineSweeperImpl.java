@@ -12,6 +12,8 @@ public class MineSweeperImpl implements MineSweeper
 	
 	protected final int BOARD_SIZE = 6;
 	
+	protected boolean youLost = false;
+	
 	protected int bombToGenerate = BOARD_SIZE*BOARD_SIZE/4;
 	
 	public MineSweeperImpl() {
@@ -23,8 +25,16 @@ public class MineSweeperImpl implements MineSweeper
 		fillWithBombs();	
 		
 		registerNumbers();
+
+		printBoardAsGame();
+		System.out.println("");
+		printBoardAsPlayer();
+
+		System.out.println(openBoxAt(0, 0));
+		putFlagAt(1, 1);
 		
-		printBoard();
+		System.out.println("");
+		printBoardAsPlayer();
 	}
 	
 	protected void fillWithBombs()
@@ -45,8 +55,8 @@ public class MineSweeperImpl implements MineSweeper
 						indexMax = i;
 					}
 				}
-			}			
-			boxes.get(indexMax).isBomb = true;;
+			}
+			boxes.get(indexMax).isBomb = true;
 			mineCount++;
 		}
 	}
@@ -82,10 +92,10 @@ public class MineSweeperImpl implements MineSweeper
 	
 	protected boolean bombAt(int xi, int yi)
 	{
-		return !boxes.get(xi + yi*BOARD_SIZE).isBomb;
+		return boxes.get(xi + yi*BOARD_SIZE).isBomb;
 	}
 	
-	protected void printBoard()
+	protected void printBoardAsGame()
 	{
 		for(int yi = 0; yi < BOARD_SIZE; yi++)
 		{
@@ -99,16 +109,89 @@ public class MineSweeperImpl implements MineSweeper
 			System.out.println();
 		}
 	}
-
-	@Override
-	public void putFlagAt(int x, int y) {
-		boxes.get(y*BOARD_SIZE + x).playerState = BoxStatePlayer.FLAGGED;
+	
+	protected void printBoardAsPlayer()
+	{
+		for(int yi = 0; yi < BOARD_SIZE; yi++)
+		{
+			for(int xi = 0; xi < BOARD_SIZE; xi++)
+			{
+				GameBox box = boxes.get(yi*BOARD_SIZE + xi);
+				switch(box.playerState)
+				{
+					case FLAGGED:
+						System.out.print("F");
+						break;
+						
+					case UNKNOWN:
+						System.out.print("O");
+						break;
+						
+					case OPENED:
+						if(box.isBomb)System.out.print("B");
+						else System.out.print(box.number == 0 ? "-" : box.number);						
+						break;
+				}
+				
+				System.out.print(" ");
+			}		
+			System.out.println();
+		}
 	}
 
 	@Override
-	public boolean openBoxAt(int x, int y) {
-		boxes.get(y*BOARD_SIZE + x).playerState = BoxStatePlayer.OPENED;
-		return !bombAt(x,y);
+	public void putFlagAt(int x, int y) {
+		GameBox box = boxes.get(y*BOARD_SIZE + x);
+		if(box.playerState != BoxStatePlayer.UNKNOWN)return;
+		box.playerState = BoxStatePlayer.FLAGGED;
+	}
+	
+	
+	@Override
+	public int openBoxAt(int x, int y) {
+		GameBox target = boxes.get(y*BOARD_SIZE + x);
+		if(target.playerState == BoxStatePlayer.OPENED)return 0;
+		target.playerState = BoxStatePlayer.OPENED;
+		
+		if(target.isBomb)
+		{
+			System.err.print("Ye died, héhé");
+			youLost = true;
+		}
+		else if(target.number == 0)
+		{
+			openNeighbours(x,y);
+		}
+		
+		if(isGameWon()) return 1;
+		
+		return target.isBomb ? -1 : 0;
+	}
+	
+	protected boolean isGameWon()
+	{
+		for(int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
+		{
+			GameBox box = boxes.get(i);
+			/**Every Bomb flagged**/
+			if(box.isBomb && box.playerState != BoxStatePlayer.FLAGGED) return false;
+			
+			/** Every NotBomb opened **/
+			if(!box.isBomb && box.playerState != BoxStatePlayer.OPENED) return false;
+		}		
+		return true;
+	}
+	
+	protected void openNeighbours(int xi, int yi)
+	{
+		if(xi != 0 && yi != 0)openBoxAt(xi-1, yi-1); 						//TOP LEFT
+		if(xi != 0)openBoxAt(xi-1, yi);										//LEFT
+		if(yi != 0)openBoxAt(xi, yi-1);										//TOP
+		if(xi != BOARD_SIZE-1 && yi != 0)openBoxAt(xi+1, yi-1); 			//TOP RIGHT
+		if(xi != BOARD_SIZE-1 && yi != BOARD_SIZE-1)openBoxAt(xi+1, yi+1);	//BOTTOM RIGHT
+		if(xi != 0 && yi != BOARD_SIZE-1)openBoxAt(xi-1, yi+1); 			//BOTTOM LEFT
+		if(yi != BOARD_SIZE-1)openBoxAt(xi, yi+1);							//BOTTOM
+		if(xi != BOARD_SIZE-1)openBoxAt(xi+1, yi);							//RIGHT
 	}
 
 	@Override
