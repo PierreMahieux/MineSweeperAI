@@ -25,16 +25,6 @@ public class MineSweeperImpl implements MineSweeper
 		fillWithBombs();	
 		
 		registerNumbers();
-
-		printBoardAsGame();
-		System.out.println("");
-		printBoardAsPlayer();
-
-		System.out.println(openBoxAt(0, 0));
-		putFlagAt(1, 1);
-		
-		System.out.println("");
-		printBoardAsPlayer();
 	}
 	
 	protected void fillWithBombs()
@@ -141,6 +131,7 @@ public class MineSweeperImpl implements MineSweeper
 
 	@Override
 	public void putFlagAt(int x, int y) {
+		if(youLost)return;
 		GameBox box = boxes.get(y*BOARD_SIZE + x);
 		if(box.playerState != BoxStatePlayer.UNKNOWN)return;
 		box.playerState = BoxStatePlayer.FLAGGED;
@@ -149,6 +140,7 @@ public class MineSweeperImpl implements MineSweeper
 	
 	@Override
 	public int openBoxAt(int x, int y) {
+		if(youLost)return -1;
 		GameBox target = boxes.get(y*BOARD_SIZE + x);
 		if(target.playerState == BoxStatePlayer.OPENED)return 0;
 		target.playerState = BoxStatePlayer.OPENED;
@@ -197,18 +189,6 @@ public class MineSweeperImpl implements MineSweeper
 	@Override
 	public int getSquaredSize() {
 		return BOARD_SIZE;
-	}
-
-	@Override
-	public int getScore() {
-		int score = 0;
-		
-		for(int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
-		{
-			if(boxes.get(i).playerState == BoxStatePlayer.OPENED) score++;
-		}		
-		
-		return score;
 	}
 
 	@Override

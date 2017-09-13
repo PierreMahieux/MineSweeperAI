@@ -15,7 +15,5 @@ public interface MineSweeper {
 	
 	public int getSquaredSize();
 	
-	public int getScore();
-	
 	public MineSweeperScore getEndGameData();
 }
