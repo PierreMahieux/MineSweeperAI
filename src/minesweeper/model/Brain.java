@@ -28,27 +28,6 @@ public class Brain
 	}
 	
 	/**
-	 * Creates a brain from a matrix list
-	 * I guess it shouldn't be used
-	 * @param list
-	 */
-	public Brain(ArrayList<Matrix> list)
-	{
-		for(Matrix m : list)
-		{
-			// Weight are the same
-			weigths.add(new Matrix(m));
-			// States are created in matrix sized (1, m's number of rows)
-			states.add(new Matrix(1,m.getSize()[0]));
-		}
-		// Add matrix sized (1, last m's number of columns)
-		states.add(new Matrix(1,list.get(list.size()-1).getSize()[1]));
-		
-		// Deprecated method ?
-		show();
-	}
-	
-	/**
 	 * Brain(1,2,3,4) will create a Brain with 1 input, two hidden layers of 2 and 3 neurons, and 4 outputs.
 	 * @param levels : a list of integer that will represent the number of neurons by level.
 	 */
@@ -70,6 +49,33 @@ public class Brain
 			{
 				// Create a random matrix sized (number of neurons in previous State, number of neurons in next State)
 				weigths.add(Matrix.random(levels[i], levels[i+1]));
+			}
+		}	
+	}
+		
+	/**
+	 * Brain(levels) will create a Brain depending on the numbers in the "levels" ArrayList.
+	 * Same result as Brain(int.. levels);
+	 * @param levels : a list of integer that will represent the number of neurons by level.
+	 */
+	public Brain(ArrayList<Integer> levels)
+	{
+		if(levels.size() < 2)
+		{
+			System.err.println("Brain too litle. Ask Pierre if you want to know what it feels like.");
+			return;
+		}
+		
+		for(int i = 0; i < levels.size(); i++)
+		{
+			// Add a state matrix sized (1, number of neurons in this level)
+			states.add(new Matrix(1,levels.get(i)));
+			
+			//As weights are transition between states, there's one state level more than weigths 
+			if(i!=levels.size()-1)
+			{
+				// Create a random matrix sized (number of neurons in previous State, number of neurons in next State)
+				weigths.add(Matrix.random(levels.get(i), levels.get(i+1)));
 			}
 		}	
 	}
