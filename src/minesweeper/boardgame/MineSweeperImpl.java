@@ -25,16 +25,6 @@ public class MineSweeperImpl implements MineSweeper
 		fillWithBombs();	
 		
 		registerNumbers();
-
-		openBoxAt(0, 0);
-		putFlagAt(5, 5);
-		
-		this.printBoardAsPlayer();
-		int[] tab = this.getBoardSnapshot();
-		for(int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
-		{
-			System.out.print(tab[i] + " ");
-		}
 	}
 	
 	protected void fillWithBombs()
