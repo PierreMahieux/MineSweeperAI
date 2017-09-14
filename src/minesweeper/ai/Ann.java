@@ -11,7 +11,6 @@ public class Ann {
 	
 	private Brain brain;
 	private ArrayList<Integer> layers = new ArrayList<Integer>();
-
 		
 	/***
 	 * Create an Artificial Neural Network based on a given boardgame.
@@ -20,7 +19,7 @@ public class Ann {
 	 * @param board
 	 */
 	public Ann(MineSweeper board) {
-		int boardSize = board.getSquaredSize();
+		int boardSize = board.getSquareSide();
 		int currentNeuronNbr = boardSize*boardSize;
 		
 		do {
@@ -34,7 +33,7 @@ public class Ann {
 	}
 	
 	public String toString() {
-		return brain.toString();
+		return "Brain : " + brain.toString() + "\nLayers : " + layers.toString();
 	}
 	
 }

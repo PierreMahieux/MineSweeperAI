@@ -187,7 +187,7 @@ public class MineSweeperImpl implements MineSweeper
 	}
 
 	@Override
-	public int getSquaredSize() {
+	public int getSquareSide() {
 		return BOARD_SIZE;
 	}
 

@@ -13,7 +13,7 @@ public interface MineSweeper {
 	 */
 	public int openBoxAt(int x, int y);
 	
-	public int getSquaredSize();
+	public int getSquareSide();
 	
 	public MineSweeperScore getEndGameData();
 	
