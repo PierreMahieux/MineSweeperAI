@@ -14,8 +14,8 @@ public class Launcher {
 		MineSweeper boardGame = new MineSweeperImpl();
 		boardGame.toString(); //GETTING RID OF THE WARNING UNUSED
 		
-		Ann ann = new Ann(boardGame);
-		ann.toString();
+		Ann lisa = new Ann(boardGame);
+		lisa.playTurn(boardGame);
 	}
 
 }
