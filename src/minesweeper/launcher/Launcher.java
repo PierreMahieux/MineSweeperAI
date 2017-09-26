@@ -1,5 +1,6 @@
 package minesweeper.launcher;
 
+import minesweeper.ai.Ann;
 import minesweeper.boardgame.MineSweeper;
 import minesweeper.boardgame.MineSweeperImpl;
 
@@ -12,6 +13,9 @@ public class Launcher {
 		
 		MineSweeper boardGame = new MineSweeperImpl();
 		boardGame.toString(); //GETTING RID OF THE WARNING UNUSED
+		
+		Ann lisa = new Ann(boardGame);
+		lisa.playTurn(boardGame);
 	}
 
 }
