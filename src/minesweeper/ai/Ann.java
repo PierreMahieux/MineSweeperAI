@@ -57,13 +57,7 @@ public class Ann {
 		double[] doubleSnap = new double[intSnap.length];
 		
 		for (int i = 0; i < intSnap.length; i++ ) {
-			if (intSnap[i] < 0) {
-				doubleSnap[i] = intSnap[i]/2.0;
-			}
-			else {
-				doubleSnap[i] = intSnap[i]/8.0;				
-			}
-			
+			doubleSnap[i] = (double)intSnap[i];
 		}
 		double [][] in = {doubleSnap};
 		
