@@ -13,6 +13,7 @@ public class Ann {
 	private Brain brain;
 	private ArrayList<Integer> layers = new ArrayList<Integer>();
 	private Matrix outputs = null, inputs = null;
+	ArrayList<Integer>  playerInputs = new ArrayList<Integer>();
 		
 	/***
 	 * Create an Artificial Neural Network based on a given boardgame.
@@ -45,6 +46,27 @@ public class Ann {
 		inputs = convertBoardToMatrix(board);
 		outputs = brain.compute(inputs);
 		System.out.println(outputs);
+		convertOutputs(board);
+		System.out.println(playerInputs);
+	}
+	
+	/**
+	 * Post treatment of the output so they can be used as player inputs on the game
+	 */
+	public void convertOutputs(MineSweeper board) {
+		// What is the meaning of the outputs :
+		// x,y : coordinates of the place we will treat
+		int boardSize = board.getSquareSide();
+		playerInputs.add((int) ((outputs.get(0, 0)+1)*boardSize/2));
+		playerInputs.add((int) ((outputs.get(0, 1)+1)*boardSize/2));
+		
+		// action : will we dig or flag this place
+		if (outputs.get(0, 2)>outputs.get(0, 3)) {
+			playerInputs.add(0);
+		}
+		else {
+			playerInputs.add(1);
+		}
 	}
 	
 	/***

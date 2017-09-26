@@ -6,9 +6,10 @@ import utils.Matrix;
 
 public class Brain
 {
-	// Matrice de passage
+	// Weights matrix between the levels
 	private ArrayList<Matrix> weigths = new ArrayList<Matrix>();
-	private ArrayList<Matrix> states = new ArrayList<Matrix>();
+	// State matrix at each level
+	private ArrayList<Matrix> states = new ArrayList<Matrix>();	
 	
 
 	/**

@@ -158,12 +158,12 @@ public class Matrix
     		System.out.println("Erreur de dimensions, demande de get d'index [" + j + "][" + i + "] dans [" + (M-1) + "][" + (N-1) + "]"); return 0; 
     }
     
-    public void set(int i, int j, double value)
+    public void set(int j, int i, double value)
     {
     	if(j < M && i < N && j >= 0 && i >= 0)
     		data[j][i] = value;
-    	//else
-    		//System.out.println("Erreur de dimensions, demande de set d'index [" + j + "][" + i + "] dans [" + (M-1) + "][" + (N-1) + "]"); 
+    	else
+    		System.out.println("Erreur de dimensions, demande de set d'index [" + j + "][" + i + "] dans [" + (M-1) + "][" + (N-1) + "]"); 
     }
     
     public Matrix times(int multiple)
