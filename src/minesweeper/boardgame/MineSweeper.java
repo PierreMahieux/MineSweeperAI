@@ -18,7 +18,7 @@ public interface MineSweeper {
 	public MineSweeperScore getEndGameData();
 	
 	/**
-	 * Returns a list of integer sized getSquaredSize².
+	 * Returns a list of integer sized getSquaredSizeï¿½.
 	 * @return -2 Means FLAG, -1 means UNKNOWN, 0>8 The amount of nearby mines
 	 */
 	public int[] getBoardSnapshot();
