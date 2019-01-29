@@ -216,7 +216,7 @@ public class Matrix
     }
 
 
-    /********************* END OF PERSOLANISED SECTION *********************/
+    /********************* END OF PERSONALISED SECTION *********************/
 
     // create M-by-N matrix of 0's
     public Matrix(int M, int N) {
@@ -238,7 +238,16 @@ public class Matrix
     // copy constructor
     public Matrix(Matrix A) { this(A.data); }
 
-    // create and return a random M-by-N matrix with values between 0 and 1
+    
+    // create and return a random M-by-N matrix with values between -1 and 1
+    public static Matrix random(int m, int n) {
+        Matrix a = new Matrix(m, n);
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                    a.data[i][j] = Math.random() * 2 - 1;
+        return a;
+    }
+    /*
     public static Matrix random(int M, int N) {
         Matrix A = new Matrix(M, N);        
         for (int i = 0; i < M; i++)
@@ -263,6 +272,7 @@ public class Matrix
         A.saturation(-4, 4);
         return A;
     }
+    */
 
     // create and return the N-by-N identity matrix
     public static Matrix identity(int N) {

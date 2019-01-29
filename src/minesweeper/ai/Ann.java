@@ -22,7 +22,7 @@ public class Ann {
 	 * @param board
 	 */
 	public Ann(MineSweeper board) {
-		int boardSize = board.getSquareSide();
+		int boardSize = board.getSquareSize();
 		int inputLayerSize = boardSize*boardSize;
 		
 		double r = Math.cbrt(inputLayerSize/SIZE_OUTPUT);
@@ -56,7 +56,7 @@ public class Ann {
 	public void convertOutputs(MineSweeper board) {
 		// What is the meaning of the outputs :
 		// x,y : coordinates of the place we will treat
-		int boardSize = board.getSquareSide();
+		int boardSize = board.getSquareSize();
 		playerInputs.add((int) ((outputs.get(0, 0)+1)*boardSize/2));
 		playerInputs.add((int) ((outputs.get(0, 1)+1)*boardSize/2));
 		
@@ -75,11 +75,13 @@ public class Ann {
 	 * @return the Matrix representing the board
 	 */
 	public Matrix convertBoardToMatrix(MineSweeper board) {
-		int[] intSnap = board.getBoardSnapshot();
-		double[] doubleSnap = new double[intSnap.length];
-		
-		for (int i = 0; i < intSnap.length; i++ ) {
-			doubleSnap[i] = (double)intSnap[i];
+		int[][] intSnap = board.getBoardSnapshot();
+		double[] doubleSnap = new double[intSnap.length*intSnap.length];
+
+		for (int yi = 0; yi < intSnap.length; yi++ ) {
+			for (int xi = 0; xi < intSnap.length; xi++ ) {
+			doubleSnap[yi*intSnap.length + xi] = (double)intSnap[yi][xi];
+			}
 		}
 		double [][] in = {doubleSnap};
 		

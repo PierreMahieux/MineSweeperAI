@@ -1,21 +1,18 @@
 package minesweeper.launcher;
 
-import minesweeper.ai.Ann;
-import minesweeper.boardgame.MineSweeper;
-import minesweeper.boardgame.MineSweeperImpl;
+import minesweeper.learning.CNNTeacher;
 
 public class Launcher {
 
 	public static void main(String[] args)
-	{
-		System.out.println("perdu");
-		// pute
+	{		
+		//MineSweeper boardGame = new MineSweeperImpl();
+		//boardGame.toString(); //GETTING RID OF THE WARNING UNUSED
+		//boardGame.printGame();
+		new CNNTeacher();
 		
-		MineSweeper boardGame = new MineSweeperImpl();
-		boardGame.toString(); //GETTING RID OF THE WARNING UNUSED
-		
-		Ann lisa = new Ann(boardGame);
-		lisa.playTurn(boardGame);
+		//Ann lisa = new Ann(boardGame);
+		//lisa.playTurn(boardGame);
 	}
 
 }
