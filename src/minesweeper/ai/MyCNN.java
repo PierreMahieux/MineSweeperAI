@@ -2,34 +2,42 @@ package minesweeper.ai;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.List;
 
 import utils.Matrix;
 import utils.MyUtils;
 
 public class MyCNN {
+	
+	protected ArrayList<ArrayList<Matrix>> cvLayers = new ArrayList<>();
 
-	protected ArrayList<Matrix> cvLayers = new ArrayList<>();
-
-	public MyCNN(int nbLayers)
+	public MyCNN(int nbCvLayers, int nbFilters)
 	{
-		for(int i = 0; i < nbLayers; i++)
-		{
-			cvLayers.add(Matrix.random(3, 3));
+		for(int l = 0; l < nbCvLayers; l++)
+		{	
+			ArrayList<Matrix> cvFilters = new ArrayList<>();
+			
+			for(int i = 0; i < nbFilters; i++)
+			{
+				cvFilters.add(Matrix.random(5, 5));
+			}
+			
+			cvLayers.add(cvFilters);
 		}
 	}
 	
-	public Matrix getMatrix(int indexInLayer)
+	public Matrix getMatrix(int indexInLayer, int indexInFilter)
 	{
-		return cvLayers.get(indexInLayer);
+		return cvLayers.get(indexInLayer).get(indexInFilter);
 	}
 	
 	public int getNbLayers() {return cvLayers.size();}
 
+	/*
 	public MyCNN(List<Matrix> matrices)
 	{
-		cvLayers.addAll(matrices);
+		cvFilters.addAll(matrices);
 	}
+	*/
 
 	public Point getBoxToFlip(int[][] theBoard)
 	{
@@ -50,7 +58,40 @@ public class MyCNN {
 		}
 
 		//showBoard(board);
-		for(Matrix m : cvLayers)
+		
+		ArrayList<double[][]> inputs = new ArrayList<>();
+		//TODO THIS IS DEBUG ONLY
+		double[][] firstInput = new double[9][9];
+		for(int yi = 0; yi < 9; yi++)
+		{
+			for(int xi = 0; xi < 9; xi++)
+			{
+				firstInput[yi][xi] = board[yi][xi];
+			}				
+		}
+		inputs.add(firstInput);
+		
+		for(ArrayList<Matrix> layerFilters : cvLayers)
+		{
+			int startSize = inputs.size();
+			for(int i = 0; i < startSize; i++)
+			{
+				for(Matrix filter : layerFilters)
+				{
+					inputs.add(MyUtils.downSampleConvolution(filter, inputs.get(i)));
+				}				
+			}
+
+			for(int i = 0; i < startSize; i++)
+			{
+				inputs.remove(0);
+			}
+		}
+		
+		//TODO TREAT SINGE SCALARS
+		
+		/*
+		for(Matrix m : cvFilters)
 		{
 			board = MyUtils.convolution(m, board);
 		}
@@ -67,7 +108,7 @@ public class MyCNN {
 		}
 
 		//showBoard(board);
-		
+		*/
 		Point max = new Point(0,0);
 		for(int yi = 0; yi < board.length; yi++)
 		{
@@ -79,14 +120,21 @@ public class MyCNN {
 				}
 			}
 		}
+		
 		return max;
 	}
 
 	public void show() 
 	{
-		for(Matrix m : cvLayers)
+		int i = 0;
+		for(ArrayList<Matrix> ml : cvLayers)
 		{
-			m.show();
+			++i;
+			System.out.println("layers n°" + i);
+			for(Matrix m : ml)
+			{
+				m.show();
+			}
 		}
 	}
 	

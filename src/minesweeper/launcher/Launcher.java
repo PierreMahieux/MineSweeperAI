@@ -10,7 +10,7 @@ public class Launcher {
 		//boardGame.toString(); //GETTING RID OF THE WARNING UNUSED
 		//boardGame.printGame();
 		new CNNTeacher();
-		
+
 		//Ann lisa = new Ann(boardGame);
 		//lisa.playTurn(boardGame);
 	}

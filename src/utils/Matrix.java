@@ -239,7 +239,9 @@ public class Matrix
     public Matrix(Matrix A) { this(A.data); }
 
     
-    // create and return a random M-by-N matrix with values between -1 and 1
+    /**
+     *  creates and returns a random M-by-N matrix with values between -1 and 1
+     */
     public static Matrix random(int m, int n) {
         Matrix a = new Matrix(m, n);
         for (int i = 0; i < m; i++)

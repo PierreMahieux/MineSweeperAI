@@ -13,7 +13,7 @@ import utils.Scorable;
 
 public class CNNTeacher {
 	
-	private int brainNumber = 200;
+	private int brainNumber = 1;
 	
 	int boardSize = 10;
 	
@@ -27,12 +27,12 @@ public class CNNTeacher {
 		
 		for(int i = 0; i < this.brainNumber; i++)
 		{
-			firstBrains.add(new MyCNN(2));
+			firstBrains.add(new MyCNN(2,4));
 		}
 		
 		
 		runStep(firstBrains); //fills brainLists with sorted brains
-		
+		/*
 		for(int i = 0; i < 100; i++)
 		{
 			ArrayList<MyCNN> newBrainList = getRandomBrainsFrom(brainList.subList(0, 20));
@@ -44,22 +44,22 @@ public class CNNTeacher {
 		playAGameForMe(brainList.get(0).brain);
 		playAGameForMe(brainList.get(0).brain);
 		playAGameForMe(brainList.get(0).brain);
-		
+		*/
 	}
 	
 	@SuppressWarnings("unused")
 	private void testMerge()
 	{
-		MyCNN a = new MyCNN(3);
-		MyCNN b = new MyCNN(3);
-		MyCNN c = merge(a,b);
+		MyCNN a = new MyCNN(2,1);
+		MyCNN b = new MyCNN(2,1);
+		//MyCNN c = merge(a,b);
 		
 		System.out.println("a");
 		a.show();
 		System.out.println("b");
 		b.show();
 		System.out.println("c");
-		c.show();
+		//c.show();
 	}
 	
 	private void runStep(ArrayList<MyCNN> list)
@@ -80,6 +80,7 @@ public class CNNTeacher {
 		System.out.println();
 	}
 	
+	/*
 	public MyCNN merge(MyCNN aCNN, MyCNN anotherCNN)
 	{
 		if(aCNN.getNbLayers() != anotherCNN.getNbLayers())
@@ -131,7 +132,7 @@ public class CNNTeacher {
 
 		return new MyCNN(matrices);
 	}
-	
+	*/
 	private ArrayList<MyCNN> getRandomBrainsFrom(List<Brain> list)
 	{
 		ArrayList<MyCNN> a = new ArrayList<>();
@@ -148,12 +149,12 @@ public class CNNTeacher {
 		{
 			brainB = list.get((int) (Math.random() * list.size())).brain;
 		}
-		
+		/*
 		while(a.size() < this.brainNumber)
 		{
 			a.add(merge(brainA, brainB));
 		}
-		
+		*/
 		return a;
 	}
 	
