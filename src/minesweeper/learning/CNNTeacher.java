@@ -12,27 +12,27 @@ import utils.Organizer;
 import utils.Scorable;
 
 public class CNNTeacher {
-	
-	private int brainNumber = 1;
-	
-	int boardSize = 10;
-	
+
+	private int brainNumber = 500;
+
+	int boardSize = 13;
+
 	private Organizer<Brain> brainList = new Organizer<>();
 
 	public CNNTeacher()
 	{
 		//testMerge();
-		
+
 		ArrayList<MyCNN> firstBrains = new ArrayList<>();
-		
+
 		for(int i = 0; i < this.brainNumber; i++)
 		{
 			firstBrains.add(new MyCNN(2,4));
 		}
-		
-		
+
+
 		runStep(firstBrains); //fills brainLists with sorted brains
-		/*
+		
 		for(int i = 0; i < 100; i++)
 		{
 			ArrayList<MyCNN> newBrainList = getRandomBrainsFrom(brainList.subList(0, 20));
@@ -44,16 +44,16 @@ public class CNNTeacher {
 		playAGameForMe(brainList.get(0).brain);
 		playAGameForMe(brainList.get(0).brain);
 		playAGameForMe(brainList.get(0).brain);
-		*/
+		 
 	}
-	
+
 	@SuppressWarnings("unused")
 	private void testMerge()
 	{
 		MyCNN a = new MyCNN(2,1);
 		MyCNN b = new MyCNN(2,1);
 		//MyCNN c = merge(a,b);
-		
+
 		System.out.println("a");
 		a.show();
 		System.out.println("b");
@@ -61,16 +61,32 @@ public class CNNTeacher {
 		System.out.println("c");
 		//c.show();
 	}
-	
+
 	private void runStep(ArrayList<MyCNN> list)
-	{		
+	{	
+		for(int c = 0; c < 10; c++)
+		{
+			if(c==0||c==9)System.out.print("|");
+			else System.out.print("-");
+		}
+		int c = 0;
+		System.out.println();
 		for(MyCNN cnn : list)
 		{
 			Brain b = new Brain(cnn);
 			b.score = playAGame(b.brain);		
 			brainList.add(b);
+			
+			
+			if((c * 100.0 / list.size())%10 == 9)
+			{
+				System.out.print("|");
+			}
+			
+			++c;
 		}
-		
+		System.out.println();
+
 		for(int i = 0; i < 10; i++)
 		{	
 			String s = " - ";
@@ -79,64 +95,72 @@ public class CNNTeacher {
 		}		
 		System.out.println();
 	}
-	
-	/*
+
+
 	public MyCNN merge(MyCNN aCNN, MyCNN anotherCNN)
 	{
+
+		ArrayList<ArrayList<Matrix>> matricesLists = new ArrayList<>();
+
 		if(aCNN.getNbLayers() != anotherCNN.getNbLayers())
 		{
 			System.err.println("SIZE ERROR");
 			return null;
 		}
-		
+
 		//CNN have same amount of layers
-		ArrayList<Matrix> matrices = new ArrayList<>();
-		
+
 		int cut = (int) (Math.random() * aCNN.getNbLayers());
-		
+
 		for(int i = 0; i < aCNN.getNbLayers(); i++)
 		{
-			Matrix mA = aCNN.getMatrix(i);
-			Matrix mB = anotherCNN.getMatrix(i);
-			
-			int height = mA.getSize()[0];
-			int width = mA.getSize()[1];
-			Matrix newMatrix = new Matrix(height, width);
-		
-			for(int yi = 0; yi < height; yi++)
+			ArrayList<Matrix> matrices = new ArrayList<>();
+			for(int li = 0; li < aCNN.getNbFilters(); li++)
 			{
-				for(int xi = 0; xi < width; xi++)
+				Matrix mA = aCNN.getMatrix(i,li);
+				Matrix mB = anotherCNN.getMatrix(i,li);
+
+				int height = mA.getSize()[0];
+				int width = mA.getSize()[1];
+				Matrix newMatrix = new Matrix(height, width);
+
+				for(int yi = 0; yi < height; yi++)
 				{
-					double noise = 1.0;
-					if(Math.random() > 0.7)
+					for(int xi = 0; xi < width; xi++)
 					{
-						noise = Math.random() > 0.5 ? 1 : -1;
-						noise += Math.random() * 0.1;
-					}					
-					
-					if(i > cut)
-					{
-						newMatrix.set(yi, xi, mB.get(yi, xi)*noise);
-					}
-					else
-					{
-						newMatrix.set(yi, xi, mA.get(yi, xi)*noise);
-					}
-					
-					
-				}				
+						double noise = 1.0;
+						if(Math.random() > 0.7)
+						{
+							noise = Math.random() > 0.5 ? 1 : -1;
+							noise += Math.random() * 0.1;
+						}					
+
+						if(i > cut)
+						{
+							newMatrix.set(yi, xi, mB.get(yi, xi)*noise);
+						}
+						else
+						{
+							newMatrix.set(yi, xi, mA.get(yi, xi)*noise);
+						}
+
+
+					}				
+				}
+
+				matrices.add(newMatrix);
 			}
 			
-			matrices.add(newMatrix);
+			matricesLists.add(matrices);
 		}
 
-		return new MyCNN(matrices);
+		return new MyCNN(matricesLists);
 	}
-	*/
+
 	private ArrayList<MyCNN> getRandomBrainsFrom(List<Brain> list)
 	{
 		ArrayList<MyCNN> a = new ArrayList<>();
-		
+
 		for(Brain b : list)
 		{
 			a.add(b.brain);
@@ -144,50 +168,50 @@ public class CNNTeacher {
 
 		MyCNN brainA = list.get((int) (Math.random() * list.size())).brain;
 		MyCNN brainB = list.get((int) (Math.random() * list.size())).brain;
-		
+
 		while(brainA == brainB)
 		{
 			brainB = list.get((int) (Math.random() * list.size())).brain;
 		}
-		/*
+		
 		while(a.size() < this.brainNumber)
 		{
 			a.add(merge(brainA, brainB));
 		}
-		*/
+		 
 		return a;
 	}
-	
+
 	private void playAGameForMe(MyCNN brain)
 	{
-		MineSweeper boardGame = new MineSweeperImpl(boardSize); 
+		MineSweeper boardGame = MineSweeperImpl.getAStartedBoard(boardSize, 3); 
 		int f = 0;
-
+		int score = -1;
 		while(f==0)
 		{
 			boardGame.printGame();
 			Point p = brain.getBoxToFlip(boardGame.getBoardSnapshot());
 			//System.out.println(p.x + " " + p.y);
 			f = boardGame.openBoxAt(p.x, p.y);
-			
-			
+
+			score++;
+
 			System.out.println();
-			
+
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
-		
+
 		boardGame.printGame();
-		System.out.println((f == -1 ? "Lost" : "Victory") + " ! ");
-		
+		System.out.println((f == -1 ? "Lost" : "Victory") + " ! " + score);
+
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -197,7 +221,7 @@ public class CNNTeacher {
 		int score = 0;
 		for(int i = 0; i < 5; i++)
 		{
-			MineSweeper boardGame = new MineSweeperImpl(boardSize); 
+			MineSweeper boardGame = MineSweeperImpl.getAStartedBoard(boardSize, 3); 
 			int currentScore = 0;
 			int f = 0;
 
@@ -212,31 +236,31 @@ public class CNNTeacher {
 
 			//System.out.println((f == -1 ? "Lost" : "Victory") + " ! " + score);
 			score += currentScore;
-			
+
 			if(f==1)
 			{
 				//boardGame.printGame();
-				score += 100;
+				score += 200;
 			}
 		}
 		return score/5;
 	}
-	
+
 	public class Brain implements Scorable
 	{
 		public MyCNN brain;
 		public int score;
-		
+
 		@Override
 		public int getScore()
 		{
 			return score;
 		}
-		
+
 		public Brain(MyCNN b) {
 			brain = b;
 			score = 0;
 		}
-		
+
 	}
 }

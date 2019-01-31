@@ -2,6 +2,7 @@ package minesweeper.ai;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.List;
 
 import utils.Matrix;
 import utils.MyUtils;
@@ -31,16 +32,21 @@ public class MyCNN {
 	}
 	
 	public int getNbLayers() {return cvLayers.size();}
+	public int getNbFilters() {return cvLayers.get(0).size();}
 
-	/*
-	public MyCNN(List<Matrix> matrices)
+	
+	public MyCNN(ArrayList<ArrayList<Matrix>> matrices)
 	{
-		cvFilters.addAll(matrices);
+		for(List<Matrix> layer : matrices)
+		{
+			cvLayers.add(new ArrayList<>(layer));
+		}
 	}
-	*/
+	
 
 	public Point getBoxToFlip(int[][] theBoard)
 	{
+		double [][] resultBoard = new double[theBoard.length][theBoard[0].length];
 		double[][] board = new double[theBoard.length][theBoard[0].length];
 		for(int yi = 0; yi < theBoard.length; yi++)
 		{
@@ -56,20 +62,63 @@ public class MyCNN {
 				}
 			}
 		}
-
-		//showBoard(board);
 		
-		ArrayList<double[][]> inputs = new ArrayList<>();
-		//TODO THIS IS DEBUG ONLY
-		double[][] firstInput = new double[9][9];
-		for(int yi = 0; yi < 9; yi++)
+		ArrayList<Point> neighborhoodModifiers = MyUtils.getModifiersForNeighbors(4);
+
+		for(int yi = 0; yi < board.length; yi++)
 		{
-			for(int xi = 0; xi < 9; xi++)
+			for(int xi = 0; xi < board[0].length; xi++)
 			{
-				firstInput[yi][xi] = board[yi][xi];
-			}				
+				if(board[yi][xi] == -0.5)
+				{
+					double[][] cutBoard = new double[9][9];
+					//System.out.println("Board");
+					//MyUtils.showTab(board);
+					for(Point p : neighborhoodModifiers)
+					{
+						if(MyUtils.isInside(yi+p.y, xi+p.x, board))
+						{
+							cutBoard[p.y+4][p.x+4] = board[yi+p.y][xi+p.x];						
+						}
+						else
+						{
+							cutBoard[p.y+4][p.x+4] = -1;
+						}
+					}
+					resultBoard[yi][xi] = evalutatePos(cutBoard);
+					//System.out.println("CutBoard");
+					//MyUtils.showTab(cutBoard);
+				}
+				else
+				{
+					resultBoard[yi][xi] = -1000;
+				}
+			}
 		}
-		inputs.add(firstInput);
+
+		//System.out.println("resultBoard");
+		//MyUtils.showTab(resultBoard);
+
+		Point max = new Point(0,0);
+		for(int yi = 0; yi < resultBoard.length; yi++)
+		{
+			for(int xi = 0; xi < resultBoard[0].length; xi++)
+			{
+				if(resultBoard[max.y][max.x] < resultBoard[yi][xi])
+				{
+					max.setLocation(xi, yi);
+				}
+			}
+		}
+		
+		return max;
+	}
+	
+	protected double evalutatePos(double[][] cutBoard)
+	{
+		ArrayList<double[][]> inputs = new ArrayList<>();
+
+		inputs.add(cutBoard);
 		
 		for(ArrayList<Matrix> layerFilters : cvLayers)
 		{
@@ -88,40 +137,15 @@ public class MyCNN {
 			}
 		}
 		
-		//TODO TREAT SINGE SCALARS
-		
-		/*
-		for(Matrix m : cvFilters)
-		{
-			board = MyUtils.convolution(m, board);
-		}
-		
-		for(int yi = 0; yi < theBoard.length; yi++)
-		{
-			for(int xi = 0; xi < theBoard[0].length; xi++)
-			{
-				if(theBoard[yi][xi] != -1)
-				{
-					board[yi][xi] = -10000.0;				
-				}
-			}
-		}
+		double finalValue = 0;
 
-		//showBoard(board);
-		*/
-		Point max = new Point(0,0);
-		for(int yi = 0; yi < board.length; yi++)
+		for(double[][] i :inputs)
 		{
-			for(int xi = 0; xi < board[0].length; xi++)
-			{
-				if(board[max.y][max.x] < board[yi][xi])
-				{
-					max.setLocation(xi, yi);
-				}
-			}
+			double v = i[0][0];
+			finalValue += v/inputs.size(); //Mean the outputs
 		}
 		
-		return max;
+		return finalValue;
 	}
 
 	public void show() 

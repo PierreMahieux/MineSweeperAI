@@ -151,7 +151,7 @@ public class MyUtils {
 		return result;
 	}
 
-	protected static boolean isInside(int j, int i, double[][] image)
+	public static boolean isInside(int j, int i, double[][] image)
 	{
 		int height = image.length;
 		int width = image[0].length;

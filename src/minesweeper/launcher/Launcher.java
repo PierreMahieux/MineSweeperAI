@@ -9,8 +9,7 @@ public class Launcher {
 		//MineSweeper boardGame = new MineSweeperImpl();
 		//boardGame.toString(); //GETTING RID OF THE WARNING UNUSED
 		//boardGame.printGame();
-		new CNNTeacher();
-
+		new CNNTeacher();		
 		//Ann lisa = new Ann(boardGame);
 		//lisa.playTurn(boardGame);
 	}

@@ -14,7 +14,7 @@ public class MineSweeperImpl implements MineSweeper
 
 	protected boolean youLost = false;
 
-	protected int bombToGenerate = BOARD_SIZE*BOARD_SIZE/4;
+	protected int bombToGenerate = (int) ((BOARD_SIZE*BOARD_SIZE)/1.7);
 
 	public MineSweeperImpl() {
 		this(6);
@@ -276,5 +276,31 @@ public class MineSweeperImpl implements MineSweeper
 			}
 		}
 		return tab;
+	}
+
+	public static MineSweeper getAStartedBoard(int boardSize, int openBoxes)
+	{
+		MineSweeperImpl board = null;
+		
+		while(board == null)
+		{
+			board = new MineSweeperImpl(boardSize);
+			int result = 0;
+			
+			for(int i = 0; i < openBoxes && result == 0; i++)
+			{
+				int randX = (int) (Math.random() * boardSize);
+				int randY = (int) (Math.random() * boardSize);
+				
+				result = board.openBoxAt(randX, randY, true);
+			}
+			
+			if(result != 0)
+			{
+				board = null;
+			}
+		}
+		
+		return board;
 	}
 }
