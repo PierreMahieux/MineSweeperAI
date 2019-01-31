@@ -14,7 +14,7 @@ public class MineSweeperImpl implements MineSweeper
 
 	protected boolean youLost = false;
 
-	protected int bombToGenerate = (int) ((BOARD_SIZE*BOARD_SIZE)/1.7);
+	protected int bombToGenerate = (int) ((BOARD_SIZE*BOARD_SIZE)/1.1);
 
 	public MineSweeperImpl() {
 		this(6);
@@ -90,7 +90,7 @@ public class MineSweeperImpl implements MineSweeper
 		return boxes.get(xi + yi*BOARD_SIZE).isBomb;
 	}
 
-	protected void printBoardAsGame()
+	public void printFullGame()
 	{
 		for(int yi = 0; yi < BOARD_SIZE; yi++)
 		{
@@ -98,6 +98,7 @@ public class MineSweeperImpl implements MineSweeper
 			{
 				boolean isBomb = boxes.get(yi*BOARD_SIZE + xi).isBomb;
 				if(isBomb)System.out.print("X");
+				else if(boxes.get(yi*BOARD_SIZE + xi).number == 0) System.out.print("-");
 				else System.out.print(boxes.get(yi*BOARD_SIZE + xi).number);
 				System.out.print(" ");
 			}		

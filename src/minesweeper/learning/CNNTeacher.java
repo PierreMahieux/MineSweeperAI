@@ -2,6 +2,7 @@ package minesweeper.learning;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import minesweeper.ai.MyCNN;
@@ -14,8 +15,9 @@ import utils.Scorable;
 public class CNNTeacher {
 
 	private int brainNumber = 500;
+	private int keptBrains = 20;
 
-	int boardSize = 13;
+	int boardSize = 20;
 
 	private Organizer<Brain> brainList = new Organizer<>();
 
@@ -33,18 +35,20 @@ public class CNNTeacher {
 
 		runStep(firstBrains); //fills brainLists with sorted brains
 		
-		for(int i = 0; i < 100; i++)
+		while(true)
 		{
-			ArrayList<MyCNN> newBrainList = getRandomBrainsFrom(brainList.subList(0, 20));
-			brainList.clear();
-			runStep(newBrainList);
-		}
+			for(int i = 0; i < 100; i++)
+			{
+				System.out.println((i+1) + " / 100");
+				ArrayList<MyCNN> newBrainList = getRandomBrainsFrom(brainList.subList(0, keptBrains));
+				brainList.clear();
+				runStep(newBrainList);
+			}
 
-		playAGameForMe(brainList.get(0).brain);
-		playAGameForMe(brainList.get(0).brain);
-		playAGameForMe(brainList.get(0).brain);
-		playAGameForMe(brainList.get(0).brain);
-		 
+			playAGameForMe(brainList.get(0).brain);
+			playAGameForMe(brainList.get(0).brain);
+			playAGameForMe(brainList.get(0).brain);
+		}
 	}
 
 	@SuppressWarnings("unused")
@@ -64,6 +68,7 @@ public class CNNTeacher {
 
 	private void runStep(ArrayList<MyCNN> list)
 	{	
+		long start = new Date().getTime();
 		for(int c = 0; c < 10; c++)
 		{
 			if(c==0||c==9)System.out.print("|");
@@ -76,18 +81,18 @@ public class CNNTeacher {
 			Brain b = new Brain(cnn);
 			b.score = playAGame(b.brain);		
 			brainList.add(b);
-			
-			
+
+
 			if((c * 100.0 / list.size())%10 == 9)
 			{
 				System.out.print("|");
 			}
-			
+
 			++c;
 		}
-		System.out.println();
+		System.out.print(" after " + ((new Date().getTime() - start) / 1000) + " s.\n Best : ");
 
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < keptBrains && i < brainList.size(); i++)
 		{	
 			String s = " - ";
 			if(i == 0)s = "";
@@ -150,7 +155,7 @@ public class CNNTeacher {
 
 				matrices.add(newMatrix);
 			}
-			
+
 			matricesLists.add(matrices);
 		}
 
@@ -165,26 +170,27 @@ public class CNNTeacher {
 		{
 			a.add(b.brain);
 		}
-
-		MyCNN brainA = list.get((int) (Math.random() * list.size())).brain;
-		MyCNN brainB = list.get((int) (Math.random() * list.size())).brain;
-
-		while(brainA == brainB)
-		{
-			brainB = list.get((int) (Math.random() * list.size())).brain;
-		}
 		
 		while(a.size() < this.brainNumber)
 		{
+
+			MyCNN brainA = list.get((int) (Math.pow(Math.random(),4) * list.size())).brain;
+			MyCNN brainB = list.get((int) (Math.pow(Math.random(),4) * list.size())).brain;
+
+			while(brainA == brainB)
+			{
+				brainB = list.get((int) (Math.random() * list.size())).brain;
+			}
+
 			a.add(merge(brainA, brainB));
 		}
-		 
+
 		return a;
 	}
 
 	private void playAGameForMe(MyCNN brain)
 	{
-		MineSweeper boardGame = MineSweeperImpl.getAStartedBoard(boardSize, 3); 
+		MineSweeper boardGame = MineSweeperImpl.getAStartedBoard(boardSize, 5); 
 		int f = 0;
 		int score = -1;
 		while(f==0)
@@ -203,7 +209,7 @@ public class CNNTeacher {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
+
 		}
 
 		boardGame.printGame();
@@ -221,7 +227,7 @@ public class CNNTeacher {
 		int score = 0;
 		for(int i = 0; i < 5; i++)
 		{
-			MineSweeper boardGame = MineSweeperImpl.getAStartedBoard(boardSize, 3); 
+			MineSweeper boardGame = MineSweeperImpl.getAStartedBoard(boardSize, 5); 
 			int currentScore = 0;
 			int f = 0;
 
@@ -240,7 +246,7 @@ public class CNNTeacher {
 			if(f==1)
 			{
 				//boardGame.printGame();
-				score += 200;
+				score += 500;
 			}
 		}
 		return score/5;
