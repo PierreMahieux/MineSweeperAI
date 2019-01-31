@@ -142,11 +142,13 @@ public class CNNTeacher {
 
 						if(i > cut)
 						{
-							newMatrix.set(yi, xi, mB.get(yi, xi)*noise);
+							double newValue = Math.max(-1, Math.min(1, mB.get(yi, xi)*noise));
+							newMatrix.set(yi, xi, newValue);
 						}
 						else
 						{
-							newMatrix.set(yi, xi, mA.get(yi, xi)*noise);
+							double newValue = Math.max(-1, Math.min(1, mA.get(yi, xi)*noise));
+							newMatrix.set(yi, xi, newValue);
 						}
 
 
