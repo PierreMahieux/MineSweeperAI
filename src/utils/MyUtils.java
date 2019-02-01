@@ -186,6 +186,16 @@ public class MyUtils {
 
 	public static void showTab(double[][] tab)
 	{
+		showTab(tab,null);
+	}
+
+	public static void showTab(double[][] tab, String tabName)
+	{
+		if(tabName != null)
+		{
+			System.out.println(tabName + " : ");
+		}
+		
 		for(int yi = 0; yi < tab.length; yi++)
 		{
 			for(int xi = 0; xi < tab[0].length; xi++)

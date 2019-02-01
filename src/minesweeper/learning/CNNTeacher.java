@@ -29,7 +29,7 @@ public class CNNTeacher {
 
 		for(int i = 0; i < this.brainNumber; i++)
 		{
-			firstBrains.add(new MyCNN(2,4));
+			firstBrains.add(new MyCNN(2,2));
 		}
 
 
