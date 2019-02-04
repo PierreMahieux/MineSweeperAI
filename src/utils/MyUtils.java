@@ -4,6 +4,11 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 public class MyUtils {
+	
+	public static double sigmoid(double input)
+	{
+		return 1/(1+Math.exp(-input));
+	}
 
 	public static double[][] convolution(Matrix m, double[][] image)
 	{

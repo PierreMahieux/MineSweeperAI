@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import minesweeper.boardgame.MineSweeperConstants;
 import utils.Matrix;
 import utils.MyUtils;
 
@@ -93,13 +94,13 @@ public class MyCNN {
 				}
 				else
 				{
-					resultBoard[yi][xi] = -1000;
+					resultBoard[yi][xi] = -1;
 				}
 			}
 		}
 
-		//System.out.println("resultBoard");
-		//MyUtils.showTab(resultBoard);
+		
+		//MyUtils.showTab(resultBoard, "resultBoard");
 
 		Point max = new Point(0,0);
 		for(int yi = 0; yi < resultBoard.length; yi++)
@@ -116,7 +117,7 @@ public class MyCNN {
 		return max;
 	}
 	
-	protected double evalutatePos(double[][] cutBoard)
+	public double evalutatePos(double[][] cutBoard)
 	{
 		ArrayList<double[][]> inputs = new ArrayList<>();
 
@@ -155,7 +156,7 @@ public class MyCNN {
 			finalValue += v/inputs.size(); //Mean the outputs
 		}
 		//System.out.println();
-		return finalValue;
+		return MyUtils.sigmoid(finalValue);
 	}
 
 	public void show() 

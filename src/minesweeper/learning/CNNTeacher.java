@@ -14,8 +14,8 @@ import utils.Scorable;
 
 public class CNNTeacher {
 
-	private int brainNumber = 500;
-	private int keptBrains = 20;
+	private int brainNumber = 2000;
+	private int keptBrains = 50;
 
 	int boardSize = 20;
 
@@ -33,16 +33,25 @@ public class CNNTeacher {
 		}
 
 
-		runStep(firstBrains); //fills brainLists with sorted brains
+		startLearning(firstBrains);
 		
+	}
+
+	private void startLearning(ArrayList<MyCNN> firstBrains)
+	{
+		ArrayList<MyCNN> newBrainList = new ArrayList<>(firstBrains);
+		
+		int step = 0;
+
 		while(true)
 		{
+			++step;
 			for(int i = 0; i < 100; i++)
 			{
-				System.out.println((i+1) + " / 100");
-				ArrayList<MyCNN> newBrainList = getRandomBrainsFrom(brainList.subList(0, keptBrains));
+				System.out.println((i+1) + " / 100 - " + step);
 				brainList.clear();
 				runStep(newBrainList);
+				newBrainList = getRandomBrainsFrom(brainList.subList(0, keptBrains));
 			}
 
 			playAGameForMe(brainList.get(0).brain);
@@ -54,20 +63,32 @@ public class CNNTeacher {
 	@SuppressWarnings("unused")
 	private void testMerge()
 	{
-		MyCNN a = new MyCNN(2,1);
-		MyCNN b = new MyCNN(2,1);
-		//MyCNN c = merge(a,b);
+		MyCNN a = new MyCNN(2,2);
+		MyCNN b = new MyCNN(2,2);
+		MyCNN c = merge(a,b);
 
 		System.out.println("a");
 		a.show();
 		System.out.println("b");
 		b.show();
 		System.out.println("c");
-		//c.show();
+		c.show();
 	}
 
 	private void runStep(ArrayList<MyCNN> list)
 	{	
+		int numberOfTestByRun = 500;
+		int numberOfBombs = 0;
+		ArrayList<MineSweeper> boards = new ArrayList<>();
+		ArrayList<Boolean> bombs = new ArrayList<>();
+		for(int f = 0; f < numberOfTestByRun;f++)
+		{
+			boolean bomb = Math.random()>0.5;
+			boards.add(MineSweeperImpl.getTestBoard(5, bomb, 5*5/2));
+			bombs.add(bomb);
+			if(bomb)numberOfBombs++;
+		}
+
 		long start = new Date().getTime();
 		for(int c = 0; c < 10; c++)
 		{
@@ -79,9 +100,14 @@ public class CNNTeacher {
 		for(MyCNN cnn : list)
 		{
 			Brain b = new Brain(cnn);
-			b.score = playAGame(b.brain);		
+			double score = 0;
+			for(int boardi = 0; boardi < boards.size(); boardi++)
+			{
+				score += runTest(cnn, boards.get(boardi), bombs.get(boardi));
+			}
+			
+			b.score = (int) score;
 			brainList.add(b);
-
 
 			if((c * 100.0 / list.size())%10 == 9)
 			{
@@ -90,7 +116,7 @@ public class CNNTeacher {
 
 			++c;
 		}
-		System.out.print(" after " + ((new Date().getTime() - start) / 1000) + " s.\n Best : ");
+		System.out.print(" with " +  numberOfBombs + "bombs. After " + ((new Date().getTime() - start) / 1000) + " s.\n Best : ");
 
 		for(int i = 0; i < keptBrains && i < brainList.size(); i++)
 		{	
@@ -172,7 +198,7 @@ public class CNNTeacher {
 		{
 			a.add(b.brain);
 		}
-		
+
 		while(a.size() < this.brainNumber)
 		{
 
@@ -188,6 +214,41 @@ public class CNNTeacher {
 		}
 
 		return a;
+	}
+
+	private double runTest(MyCNN brain, MineSweeper testBoard, Boolean bomb)
+	{
+		int[][] theBoard = testBoard.getBoardSnapshot();
+		double[][] board = new double[theBoard.length][theBoard[0].length];
+		for(int yi = 0; yi < theBoard.length; yi++)
+		{
+			for(int xi = 0; xi < theBoard[0].length; xi++)
+			{
+				if(theBoard[yi][xi] < 0)
+				{
+					board[yi][xi] = (double)theBoard[yi][xi] / 2.0;					
+				}
+				else
+				{
+					board[yi][xi] = (double)theBoard[yi][xi] / 8.0;
+				}
+			}
+		}
+		
+		double brainOutput = brain.evalutatePos(board);
+		
+		double score;
+		
+		if(bomb)//Want 0
+		{
+			score = -2*brainOutput+1;
+		}
+		else // want 1
+		{
+			score = 2*brainOutput-1;
+		}
+		
+		return score;
 	}
 
 	private void playAGameForMe(MyCNN brain)

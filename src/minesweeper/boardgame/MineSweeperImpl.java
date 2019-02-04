@@ -14,18 +14,22 @@ public class MineSweeperImpl implements MineSweeper
 
 	protected boolean youLost = false;
 
-	protected int bombToGenerate = (int) ((BOARD_SIZE*BOARD_SIZE)/1.1);
+	protected int bombToGenerate;
 
 	public MineSweeperImpl() {
 		this(6);
 	}
 
-	public MineSweeperImpl(int size) {
+	public MineSweeperImpl(int size)
+	{
 		BOARD_SIZE = size;
+		
 		for(int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
 		{
 			boxes.add(new GameBox());
 		}
+		
+		bombToGenerate = (int) ((BOARD_SIZE*BOARD_SIZE)/4);
 
 		fillWithBombs();	
 
@@ -148,6 +152,11 @@ public class MineSweeperImpl implements MineSweeper
 	@Override
 	public int openBoxAt(int x, int y) {
 		return openBoxAt(x, y, false);
+	}
+	
+	private GameBox getBoxAt(int x, int y)
+	{
+		return boxes.get(y*BOARD_SIZE + x);
 	}
 
 	private int openBoxAt(int x, int y, boolean isGame) {
@@ -278,6 +287,21 @@ public class MineSweeperImpl implements MineSweeper
 		}
 		return tab;
 	}
+	
+	
+	protected int countUncoveredCells()
+	{
+		int count = 0;
+		for(int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
+		{
+			if(boxes.get(i).playerState != BoxStatePlayer.UNKNOWN)
+			{
+				count++;
+			}
+		}
+		
+		return count;
+	}
 
 	public static MineSweeper getAStartedBoard(int boardSize, int openBoxes)
 	{
@@ -302,6 +326,44 @@ public class MineSweeperImpl implements MineSweeper
 			}
 		}
 		
+		return board;
+	}
+
+
+	public static MineSweeper getTestBoard(int boardSize, boolean bombAtCenter, int uncoveredCells)
+	{
+		MineSweeperImpl board = new MineSweeperImpl(boardSize);
+		while(board.bombAt((boardSize-1)/2, (boardSize-1)/2) != bombAtCenter || (!bombAtCenter && board.getBoxAt((boardSize-1)/2, (boardSize-1)/2).number == 0))
+		{
+			board = new MineSweeperImpl(boardSize);
+		}
+		
+		for(int yi = 0; yi < boardSize; yi++)
+		{
+			for(int xi = 0; xi < boardSize; xi++)
+			{
+				if(board.getBoxAt(xi, yi).number == 0 && board.getBoxAt(xi, yi).playerState == BoxStatePlayer.UNKNOWN)
+				{
+					board.openBoxAt(xi, yi, true);
+				}
+			}
+		}
+		
+		uncoveredCells -= board.countUncoveredCells();
+		
+		for(int i = 0; i < uncoveredCells; i++)
+		{
+			int randX = (int) (Math.random() * boardSize);
+			int randY = (int) (Math.random() * boardSize);
+			
+			while(board.bombAt(randX, randY) || board.getBoxAt(randX, randY).playerState != BoxStatePlayer.UNKNOWN || (randX == (boardSize-1)/2&&randY == (boardSize-1)/2))
+			{
+				randX = (int) (Math.random() * boardSize);
+				randY = (int) (Math.random() * boardSize);
+			}
+			
+			board.openBoxAt(randX, randY, true);
+		}
 		return board;
 	}
 }
