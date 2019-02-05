@@ -8,6 +8,7 @@ import java.util.List;
 import minesweeper.ai.MyCNN;
 import minesweeper.boardgame.MineSweeper;
 import minesweeper.boardgame.MineSweeperImpl;
+import minesweeper.boardgame.model.ModelParameter;
 import utils.Matrix;
 import utils.Organizer;
 import utils.Scorable;
@@ -77,7 +78,7 @@ public class CNNTeacher {
 
 	private void runStep(ArrayList<MyCNN> list)
 	{	
-		int numberOfTestByRun = 500;
+		int numberOfTestByRun = 200;
 		int numberOfBombs = 0;
 		ArrayList<MineSweeper> boards = new ArrayList<>();
 		ArrayList<Boolean> bombs = new ArrayList<>();
@@ -105,6 +106,8 @@ public class CNNTeacher {
 			{
 				score += runTest(cnn, boards.get(boardi), bombs.get(boardi));
 			}
+			
+			//score += playAGame(cnn);
 			
 			b.score = (int) score;
 			brainList.add(b);
@@ -160,10 +163,10 @@ public class CNNTeacher {
 					for(int xi = 0; xi < width; xi++)
 					{
 						double noise = 1.0;
-						if(Math.random() > 0.7)
+						if(Math.random() < ModelParameter.P_MUTATION)
 						{
 							noise = Math.random() > 0.5 ? 1 : -1;
-							noise += Math.random() * 0.1;
+							noise *= Math.random() * 2 * ModelParameter.MUTATION_AMPLITUDE - ModelParameter.MUTATION_AMPLITUDE;
 						}					
 
 						if(i > cut)
@@ -285,10 +288,13 @@ public class CNNTeacher {
 		}
 	}
 
+	
+	@SuppressWarnings("unused")
 	private int playAGame(MyCNN brain)
 	{
+		int nbOfGame = 2;
 		int score = 0;
-		for(int i = 0; i < 5; i++)
+		for(int i = 0; i < nbOfGame; i++)
 		{
 			MineSweeper boardGame = MineSweeperImpl.getAStartedBoard(boardSize, 5); 
 			int currentScore = 0;
@@ -309,10 +315,10 @@ public class CNNTeacher {
 			if(f==1)
 			{
 				//boardGame.printGame();
-				score += 500;
+				score += nbOfGame * 100;
 			}
 		}
-		return score/5;
+		return score/nbOfGame;
 	}
 
 	public class Brain implements Scorable

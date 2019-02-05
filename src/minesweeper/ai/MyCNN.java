@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-import minesweeper.boardgame.MineSweeperConstants;
 import utils.Matrix;
 import utils.MyUtils;
 
@@ -74,13 +73,22 @@ public class MyCNN {
 				if(board[yi][xi] == -0.5)
 				{
 					double[][] cutBoard = new double[1+(filterSize-1)*getNbFilters()][1+(filterSize-1)*getNbFilters()];
+					boolean allCovered = true;
 					//System.out.println("Board");
 					//MyUtils.showTab(board);
 					for(Point p : neighborhoodModifiers)
 					{
 						if(MyUtils.isInside(yi+p.y, xi+p.x, board))
 						{
-							cutBoard[p.y+(filterSize-1)][p.x+(filterSize-1)] = board[yi+p.y][xi+p.x];						
+							cutBoard[p.y+(filterSize-1)][p.x+(filterSize-1)] = board[yi+p.y][xi+p.x];
+							if(allCovered)
+							{
+								if(board[yi+p.y][xi+p.x] != -0.5)
+								{
+									allCovered = false;
+								}
+							}
+							
 						}
 						else
 						{
@@ -89,7 +97,14 @@ public class MyCNN {
 					}
 
 					//MyUtils.showTab(board, "Fullboard evaluated at " + xi + "," + yi);
-					resultBoard[yi][xi] = evalutatePos(cutBoard);
+					if(allCovered)
+					{
+						resultBoard[yi][xi] = 0.5;
+					}
+					else
+					{
+						resultBoard[yi][xi] = evalutatePos(cutBoard);						
+					}
 					//System.out.println("Result : " + resultBoard[yi][xi]);
 				}
 				else
